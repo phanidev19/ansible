@@ -8,14 +8,10 @@
 ## Note: If no variables are provided to the above commandline then the values will be picked from the default variables file
 ##################################################################################################################################
 
-
-- name: This is to set-up
-  hosts: 
-  become: yes
+- hosts: smarthome
+  sudo: yes
   gather_facts : true
 
-  tasks:
-  - import_role:
-      name: apache
-      tasks_from: install_apache
-    tags: install_apache
+
+  roles:
+    - apache
