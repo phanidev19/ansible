@@ -32,15 +32,15 @@
 #ansible_ssh_private_key_file="#{linux_keypair}#"
 
 [smarthome]
-172.31.5.9
-[iot]
-172.31.4.35
-[db]
-172.31.5.47
+54.227.230.218
+#[iot]
+#172.31.4.35
+#[db]
+#172.31.5.47
 
 [smarthome:vars]
-ansible_ssh_user=ec2-user
-ansible_ssh_private_key_file=/home/ec2-user/.ssh/keypair.pub
+ansible_ssh_user=centos
+ansible_ssh_private_key_file=/home/centos/sshkeys/devkey.pem
 
 [iot:vars]
 ansible_ssh_user=ec2-user

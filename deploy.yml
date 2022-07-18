@@ -8,10 +8,12 @@
 ## Note: If no variables are provided to the above commandline then the values will be picked from the default variables file
 ##################################################################################################################################
 
-- hosts: smarthome
-  sudo: yes
+- hosts: '{{ hosts }}'
+  become: yes
   gather_facts : true
 
 
   roles:
-    - apache
+   ## - nodejs
+   ## - apache
+   ## - nginx

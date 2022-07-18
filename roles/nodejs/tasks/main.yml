@@ -1,0 +1,35 @@
+---
+
+- include_vars: vars/defaults.yml
+
+#########################################################################################
+## Install Apache webserver on CentOS machine 
+## Refer the below URL to add more parameters to the below ansible role
+## https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+
+- name: Install git packages
+  yum:
+    name: git
+    state: present
+  register : install_git
+- debug:
+    var: install_git
+
+- name: Install nvm
+  git: repo=https://github.com/creationix/nvm.git dest=~/.nvm version=v0.33.11
+  tags: nvm
+
+- name: Source nvm in ~/.{{ item }}
+  lineinfile: >
+      dest=~/.{{ item }}
+      line="source ~/.nvm/nvm.sh"
+      create=yes
+  tags: nvm
+  with_items:
+    - bashrc
+    - profile
+
+- name: Install node and set version
+  shell: "source /root/.nvm/nvm.sh && nvm install 8.11.3" 
+  args:
+    executable: /bin/bash

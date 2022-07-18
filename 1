@@ -1,0 +1,17 @@
+---
+################################################################################################################################
+## Playbook to run any of the below Ansible Roles
+## usage :
+## ansible-playbook deploy.yml --tags "any_below_tag"  -e'{ "variable":"value" }'
+## Example: Use the below role 'apache' to install apache
+## ansible-playbook deploy.yml --tags "install_apache"  -e'{ "version":"latest" }' 
+## Note: If no variables are provided to the above commandline then the values will be picked from the default variables file
+##################################################################################################################################
+
+- hosts: '{{ hosts }}'
+  become: yes
+  gather_facts : true
+
+
+  roles:
+    - apache
