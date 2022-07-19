@@ -17,3 +17,5 @@
    ## - nodejs
    ## - apache
    ## - nginx
+   ## - redis
+      - php-fpm

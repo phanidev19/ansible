@@ -1,0 +1,9 @@
+---
+
+###############################################################################################################
+## This file should define "default" parameters for any variable that is used in our Ansible
+## These may be overridden depending on the frontend through which Ansible is called (e.g. AzureDevOps/Jenkins)
+################################################################################################################
+
+
+#Example

@@ -32,7 +32,7 @@
 #ansible_ssh_private_key_file="#{linux_keypair}#"
 
 [smarthome]
-54.227.230.218
+34.238.241.107
 #[iot]
 #172.31.4.35
 #[db]

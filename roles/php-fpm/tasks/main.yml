@@ -1,0 +1,97 @@
+---
+- name: download remi release repo for php
+  get_url: url=http://rpms.famillecollet.com/enterprise/remi-release-6.rpm dest=/tmp/remi-release-6.rpm
+  tags: php-fpm
+
+- name: install remi repo
+  shell: /bin/rpm -Uvh /tmp/remi-release-6.rpm
+  register: remi_repo_result
+  failed_when: "'conflict' in remi_repo_result.stderr"
+  tags: php-fpm
+
+- name: enable remi repo
+  ini_file: dest=/etc/yum.repos.d/remi.repo
+            section=remi
+            option=enabled
+            value=1
+
+- name: install php-fpm and its deps
+  yum: name={{item}} state=present
+  with_items:
+    - php
+    - php-fpm
+    - php-mbstring
+    - php-mcrypt
+    - php-pdo
+    - php-mysql
+    - php-xml
+    - php-gd
+  tags: php-fpm
+
+- name: backup default php configuration
+  shell: /bin/cp /etc/php.ini /etc/php.default.ini creates=/etc/php.default.ini
+  tags: php-fpm
+
+- name: display php errors when not in production
+  ini_file: dest=/etc/php.ini
+            section=PHP
+            option=display_errors
+            value=On
+  when: env is defined and env != "production"
+  notify:
+  - restart php-fpm
+  tags: php-fpm
+
+- name: do not show php errors when in production
+  ini_file: dest=/etc/php.ini
+            section=PHP
+            option=display_errors
+            value=Off
+  when: env is defined and env == "production"
+  notify:
+  - restart php-fpm
+  tags: php-fpm
+
+- name: backup default php-fpm configuration
+  shell: /bin/cp /etc/php-fpm.d/www.conf /etc/php-fpm.d/www.conf.default creates=/etc/php-fpm.d/www.conf.default
+  tags: php-fpm
+
+- name: change php-fpm to listen on socket
+  ini_file: dest=/etc/php-fpm.d/www.conf
+            section=www
+            option=listen
+            value=/var/run/php-fpm/php-fpm.sock
+  notify:
+  - restart php-fpm
+  tags: php-fpm
+
+- name: php-fpm listen mode should always be 0666
+  ini_file: dest=/etc/php-fpm.d/www.conf
+            section=www
+            option=listen.mode
+            value=0666
+  notify:
+  - restart php-fpm
+  tags: php-fpm
+
+- name: change php-fpm user
+  ini_file: dest=/etc/php-fpm.d/www.conf
+            section=www
+            option=user
+            value=nginx
+  notify:
+  - restart php-fpm
+  tags: php-fpm
+
+- name: change php-fpm group
+  ini_file: dest=/etc/php-fpm.d/www.conf
+            section=www
+            option=group
+            value=nginx
+  notify:
+  - restart php-fpm
+  tags: php-fpm
+
+- name: start php-fpm
+  service: name=php-fpm state=running enabled=yes
+  tags: php-fpm

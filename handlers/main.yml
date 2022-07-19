@@ -1,0 +1,5 @@
+---
+- name: restart redis
+  shell: /etc/init.d/redis stop && /etc/init.d/redis start
+- name: restart php-fpm
+  service: name=php-fpm state=restarted
