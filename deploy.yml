@@ -9,7 +9,7 @@
 ##################################################################################################################################
 
 - hosts: '{{ hosts }}'
-  become: yes
+  become: true
   gather_facts : true
 
 
@@ -18,4 +18,6 @@
    ## - apache
    ## - nginx
    ## - redis
-      - php-fpm
+   ## - php-fpm
+      - mysqld
+   ## - rabbitmq

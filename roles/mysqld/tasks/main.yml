@@ -1,25 +1,47 @@
- - name: Install the MySQL repo.
+---
 
-   yum:
+- include_vars: vars/defaults.yml
 
-      name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+#########################################################################################
+## Install Apache webserver on CentOS machine
+## Refer the below URL to add more parameters to the below ansible role
+## https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+#########################################################################################
+- name: Download MySQL Community Repo
+  get_url:
+    url: http://repo.mysql.com/mysql-community-release-el7-7.noarch.rpm
+    dest: /tmp
+  register : download_mysql_rpm
+- debug:
+    var: download_mysql_rpm
 
-      state: present
+- name: Install MySQL Community Repo
+  command: "/usr/bin/rpm -ivh /tmp/mysql-community-release-el7-7.noarch.rpm"
+  register : install_mysql_rpm
+- debug:
+    var: install_mysql_rpm
 
-      
+- name: Install MySQL Server
+  yum: 
+    name: mysql-server 
+    state: present
+  register : install_mysql_server
+- debug:
+    var: install_mysql_server
 
- - name: Override variables for MySQL (RedHat).
+- name: Install MySQL-python, this is required for the task remove anonymous user
+  yum: 
+    name: MySQL-python 
+    state: present
+  register : install_mysql_python
+- debug:
+    var: install_mysql_python
 
-   set_fact:
-
-     mysql_daemon: mysqld
-
-     mysql_packages: ['mysql-server']
-
-     mysql_log_error: /var/lib/mysql/error.log
-
-     mysql_syslog_tag: mysqld
-
-     mysql_pid_file: /var/run/mysqld/mysqld.pid
-
-     mysql_socket: /var/lib/mysql/mysql.sock
+- name: Start MySQL Server and enable it
+  service: 
+    name: mysqld 
+    state: started 
+    enabled: yes
+  register : start_mysql
+- debug:
+    var: start_mysql

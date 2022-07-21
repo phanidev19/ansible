@@ -1,0 +1,39 @@
+---
+
+- include_vars: vars/defaults.yml
+
+#########################################################################################
+## Install Apache webserver on CentOS machine
+## Refer the below URL to add more parameters to the below ansible role
+## https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+#########################################################################################
+- name: Import EPEL GPG key
+  rpm_key:
+  key: http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+  state: present
+ 
+- name: Add YUM repo
+  yum_repository:
+  name: epel
+  description: EPEL YUM repo
+  baseurl: https://dl.fedoraproject.org/pub/epel/$releasever/$basearch/
+  gpgcheck: yes
+ 
+- name: Update the software package repository
+  yum:
+  name: ‘*’
+  update_cache: yes
+ 
+- name: Install RabbitMQ server
+  package:
+  name: rabbitmq-server
+  state: latest
+
+ 
+- name: Start the RabbitMQ server
+  service:
+  name: rabbitmq-server
+  state: started
+ 
+- wait_for:
+  port: 5672
