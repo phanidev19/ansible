@@ -9,31 +9,48 @@
 #########################################################################################
 - name: Import EPEL GPG key
   rpm_key:
-  key: http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
-  state: present
+    key: http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+    state: present
+  register : import_epel_gpg_key
+- debug:
+    var: import_epel_gpg_key
  
 - name: Add YUM repo
   yum_repository:
-  name: epel
-  description: EPEL YUM repo
-  baseurl: https://dl.fedoraproject.org/pub/epel/$releasever/$basearch/
-  gpgcheck: yes
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://dl.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgcheck: yes
+  register : add_yum_repo
+- debug:
+    var: add_yum_repo 
  
 - name: Update the software package repository
-  yum:
-  name: ‘*’
-  update_cache: yes
+  command: "yum update -y"
+  register : update_yum_repo
+- debug:
+    var: update_yum_repo
  
-- name: Install RabbitMQ server
-  package:
-  name: rabbitmq-server
-  state: latest
+##- name: Install RabbitMQ server
+##  package:
+##    name: rabbitmq-server
+##    state: latest
+- name: install new rabbitmq
+  yum: 
+    name: https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq_v3_5_4_rc2/rabbitmq-server-3.5.4.rc2-1.noarch.rpm 
+    state: present
+  register : install_rabbitmq
+- debug:
+    var: install_rabbitmq
 
  
 - name: Start the RabbitMQ server
   service:
-  name: rabbitmq-server
-  state: started
+    name: rabbitmq-server
+    state: started
+  register : check_state
+- debug:
+    var: check_state
  
 - wait_for:
   port: 5672

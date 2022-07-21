@@ -3,10 +3,12 @@
 - include_vars: vars/defaults.yml
 
 #########################################################################################
-## Install Apache webserver on CentOS machine
+## Install mysql database on CentOS machine
 ## Refer the below URL to add more parameters to the below ansible role
 ## https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
 #########################################################################################
+
+##Download MySQL rpm by using get url module 
 - name: Download MySQL Community Repo
   get_url:
     url: http://repo.mysql.com/mysql-community-release-el7-7.noarch.rpm
@@ -15,12 +17,14 @@
 - debug:
     var: download_mysql_rpm
 
+##Install the MySQL repo by using rpm module
 - name: Install MySQL Community Repo
   command: "/usr/bin/rpm -ivh /tmp/mysql-community-release-el7-7.noarch.rpm"
   register : install_mysql_rpm
 - debug:
     var: install_mysql_rpm
 
+##Install the Mysql server by using yum module
 - name: Install MySQL Server
   yum: 
     name: mysql-server 
@@ -29,6 +33,8 @@
 - debug:
     var: install_mysql_server
 
+
+##Install MySQL-python by using yum module to remove anonymous user
 - name: Install MySQL-python, this is required for the task remove anonymous user
   yum: 
     name: MySQL-python 
@@ -37,6 +43,8 @@
 - debug:
     var: install_mysql_python
 
+
+##Start the mysql server by using service module
 - name: Start MySQL Server and enable it
   service: 
     name: mysqld 

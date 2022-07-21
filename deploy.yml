@@ -19,5 +19,5 @@
    ## - nginx
    ## - redis
    ## - php-fpm
-      - mysqld
-   ## - rabbitmq
+   ## - mysqld
+      - rabbitmq

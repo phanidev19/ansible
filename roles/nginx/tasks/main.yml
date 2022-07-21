@@ -3,10 +3,12 @@
 - include_vars: vars/defaults.yml
 
 #########################################################################################
-## Install Apache webserver on CentOS machine 
+## Install nginx webserver on CentOS machine 
 ## Refer the below URL to add more parameters to the below ansible role
 ## https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
 #########################################################################################
+
+##Install epel release as it is dependent package for nginx
 - name: Install epel packages
   yum:
     name: epel-release
@@ -15,6 +17,7 @@
 - debug:
     var: install_epel
 
+##INstall nginx package by using yum module
 - name: Install nginx packages 
   yum:
     name: nginx
@@ -23,6 +26,7 @@
 - debug:
     var: install_nginx
 
+## Ensure nginx is running by using service module
 - name: ensure nginx is running
   service:
     name: nginx 
@@ -31,6 +35,7 @@
 - debug:
     var: start_nginx
 
+## Open the port 80 since nginx running on port 80
 - name: Open port 80 for nginx access
   firewalld:
     service: nginx
@@ -40,6 +45,7 @@
 - debug:
     var: enable_port_nginx
 
+## Restart the OS firewall by using firewalld module
 - name: Restart the firewalld service to load in the firewall changes
   service: 
     name: firewalld 

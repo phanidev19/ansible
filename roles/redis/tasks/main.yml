@@ -1,4 +1,5 @@
 ---
+##Install redis dependencies by using yum module
 - name: install redis deps
   yum: name={{item}} state=present
   with_items:
@@ -7,14 +8,18 @@
   - wget
   tags: redis
 
+
+##Download redis source code by using wget module
 - name: download redis source
   shell: wget -O - http://download.redis.io/releases/redis-3.2.12.tar.gz | tar -xz -C /tmp creates=/tmp/redis-3.2.12
   tags: redis
 
+##Install redis with Make
 - name: install redis
   shell: make chdir=/tmp/redis-3.2.12 creates=/tmp/redis-3.2.12/src/redis-server
   tags: redis
 
+##Move the generated binary files to tmp directory
 - name: move compiled redis binaries
   shell: cp -f {{item}} /usr/local/bin chdir=/tmp/redis-3.2.12/src
   with_items:
@@ -23,16 +28,19 @@
   - redis-benchmark
   tags: redis
 
+## Configure the redis by copying redis configuration file
 - name: configure redis-server
   template:  src=redis.conf.j2 dest=/etc/redis.conf
   notify:
   - restart redis
   tags: redis
 
+##Make redis service by copying redis script
 - name: make redis a service
   template:  src=redis_init_script.j2 dest=/etc/init.d/redis mode=755
   tags: redis
 
+## Run the redis server by using sheell module
 - name: run redis
   shell: /etc/init.d/redis start creates=/var/run/redis.pid
   tags: redis
