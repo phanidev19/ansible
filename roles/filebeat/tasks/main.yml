@@ -1,0 +1,44 @@
+---
+
+- include_vars: vars/defaults.yml
+
+#########################################################################################
+## Install nginx webserver on CentOS machine
+## Refer the below URL to add more parameters to the below ansible role
+## https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+#########################################################################################
+
+
+##- name: Install filebeat
+
+##   gather_facts: False
+##   remote_user: myUser
+##   become: yes
+##   vars:
+##     elasticsearch_repo_base_url: "https://packages.elastic.co/beats/yum/el/$basearch"
+##     elasticsearch_repo_gpg_key_url: "http://packages.elastic.co/GPG-KEY-elasticsearch"
+
+ 
+- name: Importing Elasticsearch public GPG key
+  rpm_key:
+      key: "{{ elasticsearch_repo_url }}"
+      state: present
+
+- name: Add repository for filebeat
+  yum_repository:
+    name: Elastic Beats Repository
+    description: Elastic Beats Repository
+    baseurl: "{{ elasticsearch_repo_base_url }}"
+    gpgkey: "{{ elasticsearch_repo_gpg_key_url }}"
+    gpgcheck: yes
+
+- name: Install filebeat
+  yum:
+    name: filebeat
+    state: latest
+
+- name: Enabling filebeat service on boot and starting
+  service:
+    name: filebeat
+    state: restarted
+    enabled: yes

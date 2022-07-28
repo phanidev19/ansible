@@ -31,6 +31,29 @@
 - debug:
     var: update_yum_repo
 
+##Download Rabitmq rpm by using get url module
+- name: Download Rabitmq Community Repo
+  get_url:
+    url: http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm
+    dest: /tmp
+  register : download_rabitmq_rpm
+- debug:
+    var: download_mysql_rpm
+
+##Install the MySQL repo by using rpm module
+- name: Install MySQL Community Repo
+  command: "/usr/bin/rpm -ivh /tmp/erlang-solutions-1.0-1.noarch.rpm"
+  register : install_mysql_rpm
+- debug:
+    var: install_mysql_rpm
+
+    dest: /tmp
+  register : download_mysql_rpm
+- debug:
+    var: download_mysql_rpm
+
+
+
 - name: Install erlang and dependencies 
   command: "yum -y install erlang socat logrotate"
   register : install_erlang
